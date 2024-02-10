@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 
 module.exports = async (req, res) => {
   try {
-    const { message } = req.body;
+    const { messages } = req.body;
     const channelId = '1205841803623006208'; // Ganti dengan ID saluran Discord Anda
     const discordApiUrl = `https://discord.com/api/v9/channels/${channelId}/messages`;
 
@@ -12,7 +12,7 @@ module.exports = async (req, res) => {
         'Content-Type': 'application/json',
         'Authorization': 'MTE2ODE2NDMzNzA3MzAxNjkwMg.G4ToOu.YEyUz3lqQPPw2CVOT_cAikf_wW79A1bNpEWeuw', // Ganti dengan token bot Discord Anda
       },
-      body: JSON.stringify({ content: message }),
+      body: JSON.stringify({ content: messages }),
     });
 
     if (response.ok) {
