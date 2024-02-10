@@ -3,14 +3,14 @@ const fetch = require('node-fetch');
 module.exports = async (req, res) => {
   try {
     const { message } = req.body;
-    const channelId = 'ID_SALURAN_DISCORD_ANDA'; // Ganti dengan ID saluran Discord Anda
+    const channelId = '1160669101153337354/1205841803623006208'; // Ganti dengan ID saluran Discord Anda
     const discordApiUrl = `https://discord.com/api/v9/channels/${channelId}/messages`;
 
     const response = await fetch(discordApiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bot TOKEN_BOT_DISCORD_ANDA', // Ganti dengan token bot Discord Anda
+        'Authorization': 'MTE2ODE2NDMzNzA3MzAxNjkwMg.G4ToOu.YEyUz3lqQPPw2CVOT_cAikf_wW79A1bNpEWeuw', // Ganti dengan token bot Discord Anda
       },
       body: JSON.stringify({ content: message }),
     });
