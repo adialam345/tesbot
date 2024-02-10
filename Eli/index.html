@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>made by kiddie</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        #data-container {
+            width: 80%;
+            margin-top: 20px;
+        }
+
+        .message-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 15px;
+        }
+
+        .profile-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        hr {
+            margin-top: 15px;
+            margin-bottom: 15px;
+            border: 0;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Made By Kiddii</h1>
+<div id="data-container"></div>
+
+<script>
+  const API_KEY = 'da2-e3ybp4cw2vgdlgmie3byhf4ohe';
+  const GRAPHQL_URL = 'https://xzqpphzvbzhzvpke6ojjzvbpjq.appsync-api.ap-southeast-1.amazonaws.com/graphql';
+
+  const channelId = '26ce02d1-e249-4b22-ab6b-7ff1281e86a3';
+
+  const graphqlQuery = `
+    query MessagesByChannelId {
+      messagesByChannelId(channelId: "${channelId}", sortDirection: DESC, limit: 2000) {
+        items {
+          id
+          message
+          channelId
+          createdAt
+          updatedAt
+          userMessagesId
+          type
+          author {
+            givenName
+            familyName
+            nickname
+            profileImage
+          }
+        }
+      }
+    }
+  `;
+
+  // Function to convert URLs in the message to clickable links
+  const formatMessage = (text) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.replace(urlRegex, url => `<a href="${url}" target="_blank">${url}</a>`);
+  };
+
+  const fetchData = async () => {
+    try {
+      const response = await fetch(GRAPHQL_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': API_KEY,
+        },
+        body: JSON.stringify({ query: graphqlQuery }),
+      });
+
+      const data = await response.json();
+
+      if (data.errors) {
+        console.error('GraphQL Errors:', data.errors);
+        return;
+      }
+
+      // Assuming the data is an object with a property named 'data'
+      const messages = data.data.messagesByChannelId.items;
+
+      console.log('Received messages:', messages); // Log received messages
+
+      const dataContainer = document.getElementById('data-container');
+
+      // Display data in the HTML
+      messages.forEach(message => {
+        const messageContainer = document.createElement('div');
+        messageContainer.className = 'message-container';
+
+        const profileImage = message.author ? `<img src="${message.author.profileImage}" alt="Profile" class="profile-image">` : '';
+
+        messageContainer.innerHTML = `
+          ${profileImage}
+          <p><strong>NAMA:</strong> ${message.author ? `${message.author.givenName} ${message.author.familyName}` : 'Unknown'}</p>
+          <p><strong>Message:</strong> ${formatMessage(message.message)}</p>
+          <p><strong>WAKTU:</strong> ${new Date(message.createdAt).toLocaleString('en-US', { timeZone: 'Asia/Jakarta' })}</p>
+          <!-- Add more properties as needed -->
+        `;
+        dataContainer.appendChild(messageContainer);
+      });
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  fetchData();
+</script>
+
+</body>
+</html>
