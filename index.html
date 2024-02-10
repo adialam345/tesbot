@@ -104,6 +104,25 @@
 <div class="loading-spinner" id="loadingSpinner"></div>
 
 <script src="script.js"></script>
+<script>
+    const fetchData = async () => {
+  try {
+    // ... kode yang sudah ada ...
 
+    // Kirim data ke fungsi serverless di Vercel
+    await fetch('https://nama-fungsi-anda.vercel.app/discord-handler', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ messages }),
+    });
+
+    console.log('Data dikirim ke Vercel.');
+  } catch (error) {
+    console.error('Error mengambil data:', error);
+  }
+};
+</script>
 </body>
 </html>
