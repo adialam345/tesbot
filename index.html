@@ -1,128 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>made by kiddie</title>
-    <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-        }
+<!-- ... (bagian sebelumnya) ... -->
 
-        h1 {
-            color: #ff6347;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 10px;
-            font-size: 18px;
-            color: #333;
-        }
-
-        select {
-            padding: 8px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
-
-        button {
-            background-color: #4caf50;
-            color: white;
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        #data-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: left;
-        }
-
-        p {
-            margin: 10px 0;
-        }
-
-        a {
-            color: #0066cc;
-            text-decoration: none;
-        }
-
-        hr {
-            border: 1px solid #ccc;
-            margin: 15px 0;
-        }
-
-        /* Loading animation */
-        .loading-spinner {
-            border: 8px solid #f3f3f3;
-            border-top: 8px solid #3498db;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-            display: none;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
-</head>
-<body>
-
-<!-- Dropdown menu for member selection -->
-<label for="memberDropdown">Pilih Member:</label>
-<select id="memberDropdown">
-  <option value="#">Pilih Member</option>
-  <!-- Options will be dynamically added here -->
-</select>
-<button onclick="redirectToMember()">Go</button>
-
-<h1>Made By kiddiipie!!!</h1>
-<div id="data-container"></div>
-<div class="loading-spinner" id="loadingSpinner"></div>
-
-<script src="script.js"></script>
 <script>
-    const fetchData = async () => {
-  try {
-    // ... kode yang sudah ada ...
+  const API_KEY = 'da2-e3ybp4cw2vgdlgmie3byhf4ohe';
+  const GRAPHQL_URL = 'https://xzqpphzvbzhzvpke6ojjzvbpjq.appsync-api.ap-southeast-1.amazonaws.com/graphql';
+  const channelId = '4c93270c-8537-4b2c-b46c-6b0075260dcc';
 
-    // Kirim data ke fungsi serverless di Vercel
-    await fetch('https://tesbot-eight.vercel.app/discord-handler.js', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ messages }),
-    });
+  const graphqlQuery = `
+    query MessagesByChannelId {
+      messagesByChannelId(channelId: "${channelId}", sortDirection: DESC, limit: 2000) {
+        items {
+          id
+          message
+          channelId
+          createdAt
+          updatedAt
+          userMessagesId
+          type
+          author {
+            givenName
+            familyName
+            nickname
+            profileImage
+          }
+        }
+      }
+    }
+  `;
 
-    console.log('Data dikirim ke Vercel.');
-  } catch (error) {
-    console.error('Error mengambil data:', error);
-  }
-};
+  // ... (fungsi formatMessage dan fetchData yang sudah ada) ...
+
+  fetchData(); // Pemanggilan fetchData setelah definisi
+</script>
+
+<script>
+  const fetchDataToVercel = async () => {
+    try {
+      // ... (kode yang sudah ada) ...
+
+      // Kirim data ke fungsi serverless di Vercel
+      await fetch('https://tesbot-eight.vercel.app/discord-handler.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ messages }),
+      });
+
+      console.log('Data dikirim ke Vercel.');
+    } catch (error) {
+      console.error('Error mengambil data:', error);
+    }
+  };
+
+  fetchDataToVercel(); // Pemanggilan fetchDataToVercel setelah definisi
 </script>
 </body>
 </html>
