@@ -104,39 +104,47 @@
 <div class="loading-spinner" id="loadingSpinner"></div>
 
 <script>
-  const API_KEY = 'da2-e3ybp4cw2vgdlgmie3byhf4ohe';
-  const GRAPHQL_URL = 'https://xzqpphzvbzhzvpke6ojjzvbpjq.appsync-api.ap-southeast-1.amazonaws.com/graphql';
+  const loadingSpinner = document.getElementById('loadingSpinner');
 
-  const graphqlQuery = `
-    query MessagesByChannelId {
-      messagesByChannelId(channelId: "${channelId}", sortDirection: DESC, limit: 2000) {
-        items {
-          id
-          message
-          channelId
-          createdAt
-          updatedAt
-          userMessagesId
-          type
-          author {
-            givenName
-            familyName
-            nickname
-            profileImage
-          }
-        }
-      }
-    }
-  `;
+  // Show loading spinner while fetching data
+  const showLoadingSpinner = () => {
+    loadingSpinner.style.display = 'block';
+  };
 
-  // Function to convert URLs in the message to clickable links
-  const formatMessage = (text) => {
-    const urlRegex = /(https?:\/\/[^\s]+)/g;
-    return text.replace(urlRegex, url => `<a href="${url}" target="_blank">${url}</a>`);
+  // Hide loading spinner after data is fetched
+  const hideLoadingSpinner = () => {
+    loadingSpinner.style.display = 'none';
   };
 
   const fetchData = async () => {
     try {
+      showLoadingSpinner();
+
+      const API_KEY = 'da2-e3ybp4cw2vgdlgmie3byhf4ohe';
+      const GRAPHQL_URL = 'https://xzqpphzvbzhzvpke6ojjzvbpjq.appsync-api.ap-southeast-1.amazonaws.com/graphql';
+
+      const graphqlQuery = `
+        query MessagesByUpdateAt {
+          messagesByUpdateAt(type: "message", sortDirection: DESC, limit: 2000) {
+            items {
+              id
+              message
+              channelId
+              createdAt
+              updatedAt
+              userMessagesId
+              type
+              author {
+                givenName
+                familyName
+                nickname
+                profileImage
+              }
+            }
+          }
+        }
+      `;
+
       const response = await fetch(GRAPHQL_URL, {
         method: 'POST',
         headers: {
@@ -148,40 +156,73 @@
 
       const data = await response.json();
 
-      if (data.errors) {
-        console.error('GraphQL Errors:', data.errors);
-        return;
-      }
-
       // Assuming the data is an object with a property named 'data'
-      const messages = data.data.messagesByChannelId.items;
+      const messages = data.data.messagesByUpdateAt.items;
 
-      console.log('Received messages:', messages); // Log received messages
+      // Sort messages by createdAt in descending order (most recent first)
+      messages.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
       const dataContainer = document.getElementById('data-container');
 
       // Display data in the HTML
+      const addedMembers = new Set(); // To track added member names
+      const memberDropdown = document.getElementById('memberDropdown');
+
       messages.forEach(message => {
-        const messageContainer = document.createElement('div');
-        messageContainer.className = 'message-container';
+        const authorName = message.author ? message.author.nickname : 'Unknown';
 
-        const profileImage = message.author ? `<img src="${message.author.profileImage}" alt="Profile" class="profile-image">` : '';
+        // Check if the member name is not already added
+        if (!addedMembers.has(authorName)) {
+          addedMembers.add(authorName);
 
-        messageContainer.innerHTML = `
-          ${profileImage}
-          <p><strong>NAMA:</strong> ${message.author ? `${message.author.givenName} ${message.author.familyName}` : 'Unknown'}</p>
+          const option = document.createElement('option');
+          option.value = authorName;
+          option.text = authorName;
+          memberDropdown.appendChild(option);
+        }
+
+        const messageElement = document.createElement('div');
+        messageElement.innerHTML = `
+          <p><strong>NAMA:</strong> ${authorName}</p>
           <p><strong>Message:</strong> ${formatMessage(message.message)}</p>
           <p><strong>WAKTU:</strong> ${new Date(message.createdAt).toLocaleString('en-US', { timeZone: 'Asia/Jakarta' })}</p>
           <!-- Add more properties as needed -->
+          <hr>
         `;
-        dataContainer.appendChild(messageContainer);
+        dataContainer.appendChild(messageElement);
       });
+
+      hideLoadingSpinner();
     } catch (error) {
       console.error('Error fetching data:', error);
+      hideLoadingSpinner();
     }
   };
 
-  fetchData(); // Pemanggilan fetchData setelah definisi
+  // Function to convert URLs in the message to clickable links
+  const formatMessage = (text) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    return text.replace(urlRegex, url => `<a href="${url}" target="_blank">${url}</a>`);
+  };
+
+  // Redirect to the specified URL based on the selected member
+  const redirectToMember = () => {
+    const memberDropdown = document.getElementById('memberDropdown');
+    const selectedMember = memberDropdown.value;
+
+    // Check if a member is selected
+    if (selectedMember !== "#") {
+      // Assuming 'http://localhost/pm_jkt48/nama_member_yang_dipilih/index.html' as the base URL
+      const redirectURL = `http://localhost/pm_jkt48/${encodeURIComponent(selectedMember)}/index.html`;
+
+      // Redirect to the selected member's page
+      window.location.href = redirectURL;
+    } else {
+      alert("Pilihlah anggota terlebih dahulu.");
+    }
+  };
+
+  fetchData();
 </script>
 
 <script>
