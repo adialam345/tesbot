@@ -17,7 +17,7 @@ client.once('ready', () => {
   console.log(`Logged in as ${client.user.tag}`);
 });
 
-app.post('/discord-handler', (req, res) => {
+app.post('discord-handler.js', (req, res) => {
   try {
     const { messages } = req.body;
 
