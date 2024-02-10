@@ -3,7 +3,7 @@ const fetch = require('node-fetch');
 module.exports = async (req, res) => {
   try {
     const { message } = req.body;
-    const channelId = '1160669101153337354/1205841803623006208'; // Ganti dengan ID saluran Discord Anda
+    const channelId = '1205841803623006208'; // Ganti dengan ID saluran Discord Anda
     const discordApiUrl = `https://discord.com/api/v9/channels/${channelId}/messages`;
 
     const response = await fetch(discordApiUrl, {
