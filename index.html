@@ -213,7 +213,7 @@
     // Check if a member is selected
     if (selectedMember !== "#") {
       // Assuming 'http://localhost/pm_jkt48/nama_member_yang_dipilih/index.html' as the base URL
-      const redirectURL = `http://localhost/pm_jkt48/${encodeURIComponent(selectedMember)}/index.html`;
+      const redirectURL = `/pm_jkt48/${encodeURIComponent(selectedMember)}/`;
 
       // Redirect to the selected member's page
       window.location.href = redirectURL;
