@@ -5,93 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>made by kiddie</title>
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-        }
-
-        h1 {
-            color: #ff6347;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 10px;
-            font-size: 18px;
-            color: #333;
-        }
-
-        select {
-            padding: 8px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
-
-        button {
-            background-color: #4caf50;
-            color: white;
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        #data-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: left;
-        }
-
-        p {
-            margin: 10px 0;
-        }
-
-        a {
-            color: #0066cc;
-            text-decoration: none;
-        }
-
-        hr {
-            border: 1px solid #ccc;
-            margin: 15px 0;
-        }
-
-        /* Loading animation */
-        .loading-spinner {
-            border: 8px solid #f3f3f3;
-            border-top: 8px solid #3498db;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-            display: none;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        /* ... Gaya CSS Anda ... */
     </style>
 </head>
 <body>
 
-<!-- Dropdown menu for member selection -->
 <label for="memberDropdown">Pilih Member:</label>
 <select id="memberDropdown">
   <option value="#">Pilih Member</option>
@@ -106,12 +24,10 @@
 <script>
   const loadingSpinner = document.getElementById('loadingSpinner');
 
-  // Show loading spinner while fetching data
   const showLoadingSpinner = () => {
     loadingSpinner.style.display = 'block';
   };
 
-  // Hide loading spinner after data is fetched
   const hideLoadingSpinner = () => {
     loadingSpinner.style.display = 'none';
   };
@@ -155,23 +71,15 @@
       });
 
       const data = await response.json();
-
-      // Assuming the data is an object with a property named 'data'
       const messages = data.data.messagesByUpdateAt.items;
 
-      // Sort messages by createdAt in descending order (most recent first)
-      messages.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
       const dataContainer = document.getElementById('data-container');
-
-      // Display data in the HTML
-      const addedMembers = new Set(); // To track added member names
+      const addedMembers = new Set();
       const memberDropdown = document.getElementById('memberDropdown');
 
       messages.forEach(message => {
         const authorName = message.author ? message.author.nickname : 'Unknown';
 
-        // Check if the member name is not already added
         if (!addedMembers.has(authorName)) {
           addedMembers.add(authorName);
 
@@ -186,7 +94,6 @@
           <p><strong>NAMA:</strong> ${authorName}</p>
           <p><strong>Message:</strong> ${formatMessage(message.message)}</p>
           <p><strong>WAKTU:</strong> ${new Date(message.createdAt).toLocaleString('en-US', { timeZone: 'Asia/Jakarta' })}</p>
-          <!-- Add more properties as needed -->
           <hr>
         `;
         dataContainer.appendChild(messageElement);
@@ -199,23 +106,17 @@
     }
   };
 
-  // Function to convert URLs in the message to clickable links
   const formatMessage = (text) => {
     const urlRegex = /(https?:\/\/[^\s]+)/g;
     return text.replace(urlRegex, url => `<a href="${url}" target="_blank">${url}</a>`);
   };
 
-  // Redirect to the specified URL based on the selected member
   const redirectToMember = () => {
     const memberDropdown = document.getElementById('memberDropdown');
     const selectedMember = memberDropdown.value;
 
-    // Check if a member is selected
     if (selectedMember !== "#") {
-      // Assuming 'http://localhost/pm_jkt48/nama_member_yang_dipilih/index.html' as the base URL
       const redirectURL = `/${encodeURIComponent(selectedMember)}/`;
-
-      // Redirect to the selected member's page
       window.location.href = redirectURL;
     } else {
       alert("Pilihlah anggota terlebih dahulu.");
@@ -228,10 +129,7 @@
 <script>
   const fetchDataToVercel = async () => {
     try {
-      // ... (kode yang sudah ada) ...
-
-      // Kirim data ke fungsi serverless di Vercel
-      await fetch('https://tesbot-eight.vercel.app/discord-handler.js', {
+      const response = await fetch('/api/discord-handler', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -245,7 +143,8 @@
     }
   };
 
-  fetchDataToVercel(); // Pemanggilan fetchDataToVercel setelah definisi
+  fetchDataToVercel();
 </script>
+
 </body>
 </html>
